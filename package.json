@@ -1,0 +1,26 @@
+{
+  "name": "stargazerchat",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/2008davidalmeida-sketch/StarGazerChat#readme",
+  "bugs": {
+    "url": "https://github.com/2008davidalmeida-sketch/StarGazerChat/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2008davidalmeida-sketch/StarGazerChat.git"
+  },
+  "license": "ISC",
+  "author": "David Almeida",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "mongodb": "^7.1.1",
+    "mongoose": "^9.3.3"
+  }
+}
