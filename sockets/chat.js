@@ -1,3 +1,10 @@
+/*
+This file initializes the Socket.IO server for real-time communication in the chat application. 
+It includes middleware for authenticating users using JWT tokens, and defines event handlers for 
+joining chat rooms, sending messages, and handling user disconnections. 
+Messages are saved to the database and broadcasted to all users in the same chat room.
+*/
+
 import Message from '../models/message.js';
 import jwt from 'jsonwebtoken';
 

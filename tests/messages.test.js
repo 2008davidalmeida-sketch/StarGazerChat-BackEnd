@@ -1,3 +1,10 @@
+/*
+This file contains tests for the messaging functionality of the chat application. 
+It tests the retrieval of messages from a specific chat room by sending an HTTP GET request to the messages endpoint. 
+The test checks if the response status is 200, indicating that the messages were successfully retrieved. 
+After the test is completed, it disconnects from MongoDB.
+*/
+
 import { test, after } from 'node:test';
 import assert from 'node:assert';
 import Message from '../models/message.js';
@@ -12,7 +19,6 @@ const loginResponse = await fetch('http://localhost:3000/auth/login', {
     body: JSON.stringify({ username: 'testuser_messages', password: '123456' })
 });
 const { token } = await loginResponse.json();
-console.log('Token:', token);
 
 test('send a new message', async () => {
     const response = await fetch('http://localhost:3000/messages/69ca6ae99fe5ddf178e3b0df', {

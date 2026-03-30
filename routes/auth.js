@@ -1,3 +1,10 @@
+/*
+This file contains the routes for user authentication, including registration and login.
+It uses bcrypt for password hashing and jsonwebtoken for token generation. 
+The routes handle user input validation, check for existing users, and return appropriate responses 
+based on the success or failure of the operations.
+*/
+
 import { Router } from 'express';
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
@@ -8,8 +15,16 @@ const router = Router();
 router.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const existingUser = await User.findOne({ username });
 
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Please enter all fields' });
+        }
+
+        if (username.length > 15) {
+            return res.status(400).json({ message: 'Username must be less than 15 characters' });
+        }
+
+        const existingUser = await User.findOne({ username });
         if (existingUser) {
             return res.status(400).json({ message: 'Username already exists' });
         }

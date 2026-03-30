@@ -1,3 +1,9 @@
+/*
+This file contains tests for the authentication routes of the chat application. 
+It tests the registration and login functionality by sending HTTP requests to the respective endpoints. 
+After the tests are completed, it cleans up by deleting the test user from the database and disconnecting from MongoDB.
+*/
+
 import { test, after } from 'node:test';
 import assert from 'node:assert';
 import User from '../models/user.js';

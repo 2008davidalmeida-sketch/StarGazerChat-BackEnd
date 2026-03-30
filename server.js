@@ -1,3 +1,9 @@
+/*
+This file sets up the Express server, connects to MongoDB, and initializes the Socket.
+IO server for real-time communication. 
+It imports necessary routes for authentication and messaging, and starts the server on a specified port.
+*/
+
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';  
