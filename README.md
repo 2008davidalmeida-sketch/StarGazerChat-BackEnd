@@ -33,4 +33,4 @@ Message routes (add to routes/messages.js):
 Tests to write (tests/):
     rooms.test.js — test all room routes
     users.test.js — test all user routes
-    messages.tes
+    messages.test.js — add delete message test
