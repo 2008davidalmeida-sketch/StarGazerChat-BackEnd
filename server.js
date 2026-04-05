@@ -12,6 +12,7 @@ import messageRoutes from './routes/messages.js';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 import { initSocket } from './sockets/chat.js';
+import cors from 'cors';
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to MongoDB'))
@@ -19,8 +20,13 @@ mongoose.connect(process.env.MONGO_URI)
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:5173'
+    }
+});
 
+app.use(cors({origin: 'http://localhost:5173'}));
 app.use(express.json());
 app.use('/auth', authRoutes);  
 app.use('/messages', messageRoutes);  
