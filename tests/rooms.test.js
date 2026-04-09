@@ -78,6 +78,7 @@ test('fetch rooms for logged-in user', async () => {
         headers: { 'Authorization': `Bearer ${tokenA}` }
     });
     const data = await response.json();
+    console.log(data)
 
     assert.strictEqual(response.status, 200);
     assert.ok(Array.isArray(data));

@@ -22,8 +22,25 @@ router.get('/', authMiddleware, async (req, res) => {
     try {
         const rooms = await Room.find({ members: new mongoose.Types.ObjectId(req.user.id) })
             .populate('members', '-password');
+            
+        const roomsWithLastMessage = await Promise.all(
+            rooms.map(async (room) => {
+                const lastMessage = await Message.findOne({ room: room._id })
+                    .sort({ createdAt: -1 })
+                    .populate('sender', '-password');
+                
+                const lastSeen = room.lastSeen.get(req.user.id);
+                const unreadCount = await Message.countDocuments({
+                    room: room._id,
+                    sender: { $ne: req.user.id },
+                    ...(lastSeen && { createdAt: { $gt: lastSeen } })
+                });
+                
+                return { ...room.toObject(), lastMessage, lastSeen, unreadCount };
+            })
+        );
 
-        res.json(rooms);
+        res.json(roomsWithLastMessage);
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }
@@ -78,6 +95,25 @@ router.delete('/:roomId', authMiddleware, async (req, res) => {
         await Message.deleteMany({ room: room._id });
 
         res.json({ message: 'Room deleted' });
+
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+router.patch('/:roomId/lastSeen', authMiddleware, async (req, res) => {
+    try {
+        const room = await Room.findById(req.params.roomId);
+
+        if (!room) return res.status(404).json({ message: 'Room not found' });
+
+        const isMember = room.members.some(m => m.toString() === req.user.id);
+        if (!isMember) return res.status(403).json({ message: 'Not a member of this room' });
+
+        room.lastSeen.set(req.user.id, new Date());
+        await room.save();
+
+        res.json({ message: 'Last seen updated' });
 
     } catch (err) {
         res.status(500).json({ message: 'Server error' });

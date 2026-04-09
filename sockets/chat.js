@@ -1,10 +1,3 @@
-/*
-This file initializes the Socket.IO server for real-time communication in the chat application. 
-It includes middleware for authenticating users using JWT tokens, and defines event handlers for 
-joining chat rooms, sending messages, and handling user disconnections. 
-Messages are saved to the database and broadcasted to all users in the same chat room.
-*/
-
 import Message from '../models/message.js';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
@@ -24,6 +17,7 @@ export function initSocket(io) {
     io.on('connection', async (socket) => {
         try {
             await User.findByIdAndUpdate(socket.user.id, { status: "online" });
+            socket.broadcast.emit('userStatus', { userId: socket.user.id, status: 'online' });
             console.log('User connected:', socket.id);
         } catch (error) {
             console.error('Error updating user status:', error);
@@ -53,6 +47,7 @@ export function initSocket(io) {
         socket.on('disconnect', async () => {
             try {
                 await User.findByIdAndUpdate(socket.user.id, { status: "offline" });
+                io.emit('userStatus', { userId: socket.user.id, status: 'offline' });
                 console.log('User disconnected:', socket.id);
             } catch (error) {
                 console.error('Error updating user status:', error);
