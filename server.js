@@ -24,11 +24,11 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: 'https://stargazerchat.vercel.app'
+        origin: ['https://stargazerchat.vercel.app' , 'http://localhost:5173']
     }
 });
 
-app.use(cors({origin: 'https://stargazerchat.vercel.app'}));
+app.use(cors({origin: ['https://stargazerchat.vercel.app' , 'http://localhost:5173']}));
 app.use(express.json());
 app.use('/auth', authRoutes);  
 app.use('/messages', messageRoutes);  
