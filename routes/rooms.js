@@ -59,14 +59,12 @@ router.post('/', authMiddleware, async (req, res) => {
             return res.status(400).json({ message: 'Cannot create a room with yourself' });
         }
 
-      
         const existingRoom = await Room.findOne({
             members: { $all: [req.user.id, targetUser._id], $size: 2 }
         }).populate('members', '-password');
 
         if (existingRoom) return res.json(existingRoom);
 
-      
         const room = new Room({
             name: `${req.user.id}-${targetUser._id}`,
             members: [req.user.id, targetUser._id]
@@ -75,6 +73,15 @@ router.post('/', authMiddleware, async (req, res) => {
         await room.save();
 
         const populated = await room.populate('members', '-password');
+
+        const io = req.app.get('io');
+        const otherMemberId = populated.members
+            .find(m => m._id.toString() !== req.user.id)?._id.toString();
+        
+        if (otherMemberId) {
+            io.to(otherMemberId).emit('newRoom', populated);
+        }
+
         res.status(201).json(populated);
 
     } catch (err) {
@@ -93,6 +100,11 @@ router.delete('/:roomId', authMiddleware, async (req, res) => {
 
         await Room.deleteOne({ _id: room._id });
         await Message.deleteMany({ room: room._id });
+
+        const io = req.app.get('io');
+        room.members.forEach(memberId => {
+            io.to(memberId.toString()).emit('roomDeleted', { roomId: room._id });
+        });
 
         res.json({ message: 'Room deleted' });
 

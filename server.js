@@ -28,6 +28,7 @@ const io = new Server(server, {
     }
 });
 
+app.set('io', io);
 app.use(cors({origin: ['https://stargazerchat.vercel.app' , 'http://localhost:5173']}));
 app.use(express.json());
 app.use('/auth', authRoutes);  
