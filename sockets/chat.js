@@ -18,7 +18,9 @@ export function initSocket(io) {
         try {
             socket.join(socket.user.id);
             console.log(`User ${socket.user.id} joined their personal room`);
+            
             await User.findByIdAndUpdate(socket.user.id, { status: "online" });
+            
             socket.broadcast.emit('userStatus', { userId: socket.user.id, status: 'online' });
             console.log('User connected:', socket.id);
         } catch (error) {
