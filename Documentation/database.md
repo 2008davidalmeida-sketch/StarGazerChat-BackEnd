@@ -4,6 +4,7 @@
 - **username**: `String` (Required) - The user's unique chosen handle.
 - **password**: `String` (Required) - Bcrypt hashed string.
 - **status**: `String` (Enum: `["online", "offline"]`, Default: `"offline"`) - Current activity state.
+- **bio**: `String` (Default: `""`) - A short user-written description displayed on their profile.
 - **timestamps**: `createdAt` / `updatedAt`
 
 ## Room Model

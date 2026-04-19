@@ -11,8 +11,10 @@ import User from '../models/user.js';
 import Room from '../models/room.js';
 import 'dotenv/config';
 
+// Connect to MongoDB before running tests
 await mongoose.connect(process.env.MONGO_URI);
 
+// Register two test users to create rooms between
 await fetch('http://localhost:3000/auth/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -25,6 +27,7 @@ await fetch('http://localhost:3000/auth/register', {
     body: JSON.stringify({ username: 'testuser_rb', password: '123456' })
 });
 
+// Login as user A to get an auth token
 const loginA = await fetch('http://localhost:3000/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -32,6 +35,7 @@ const loginA = await fetch('http://localhost:3000/auth/login', {
 });
 const { token: tokenA } = await loginA.json();
 
+// Test: create a new 1-on-1 room and verify it has 2 members without passwords
 test('create a new 1-on-1 room', async () => {
     const response = await fetch('http://localhost:3000/rooms', {
         method: 'POST',
@@ -49,6 +53,7 @@ test('create a new 1-on-1 room', async () => {
     data.members.forEach(m => assert.strictEqual(m.password, undefined));
 });
 
+// Test: calling create room twice returns the existing room instead of a duplicate
 test('returns existing room instead of creating duplicate', async () => {
     await fetch('http://localhost:3000/rooms', {
         method: 'POST',
@@ -73,6 +78,7 @@ test('returns existing room instead of creating duplicate', async () => {
     assert.ok(data._id);
 });
 
+// Test: fetching rooms returns an array with at least one room
 test('fetch rooms for logged-in user', async () => {
     const response = await fetch('http://localhost:3000/rooms', {
         headers: { 'Authorization': `Bearer ${tokenA}` }
@@ -85,6 +91,7 @@ test('fetch rooms for logged-in user', async () => {
     assert.ok(data.length > 0);
 });
 
+// Test: creating a room with yourself is rejected with a 400
 test('cannot create room with yourself', async () => {
     const response = await fetch('http://localhost:3000/rooms', {
         method: 'POST',
@@ -98,6 +105,7 @@ test('cannot create room with yourself', async () => {
     assert.strictEqual(response.status, 400);
 });
 
+// Test: unauthenticated requests are rejected with a 401
 test('create room - unauthenticated returns 401', async () => {
     const response = await fetch('http://localhost:3000/rooms', {
         method: 'POST',
@@ -108,6 +116,7 @@ test('create room - unauthenticated returns 401', async () => {
     assert.strictEqual(response.status, 401);
 });
 
+// Cleanup: delete test users and all test rooms, then disconnect from MongoDB
 after(async () => {
     await User.deleteOne({ username: 'testuser_ra' });
     await User.deleteOne({ username: 'testuser_rb' });

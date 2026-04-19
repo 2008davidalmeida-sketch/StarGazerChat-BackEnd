@@ -10,8 +10,10 @@ import assert from 'node:assert';
 import mongoose from 'mongoose';
 import 'dotenv/config'
 
+// Connect to MongoDB before running tests
 await mongoose.connect(process.env.MONGO_URI);
 
+// Login as testuser_msg to get an auth token
 const loginResponse = await fetch('http://localhost:3000/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -20,6 +22,7 @@ const loginResponse = await fetch('http://localhost:3000/auth/login', {
 const data = await loginResponse.json();
 const { token } = data;
 
+// Test: fetch messages from a specific chat room
 test('fetch messages', async () => {
     const response = await fetch('http://localhost:3000/messages/69ca6ae99fe5ddf178e3b0df', {
         method: 'GET',

@@ -31,6 +31,20 @@
 - **Auth Required:** Yes
 - **Response:** User object of the currently authenticated user (excluding password).
 
+### Update Profile
+- **Method:** PATCH
+- **Path:** `/users/me`
+- **Auth Required:** Yes
+- **Request Body:** `{ "username": "newUsername", "bio": "My new bio" }`
+- **Response:** Updated user object on success, or `{ "message": "Username already taken" }` if the username conflicts with another account.
+
+### Change Password
+- **Method:** PATCH
+- **Path:** `/users/password`
+- **Auth Required:** Yes
+- **Request Body:** `{ "currentPassword": "oldPass", "newPassword": "newPass" }`
+- **Response:** `{ "message": "Password updated successfully" }` or `{ "message": "Current password is incorrect" }`.
+
 ## Rooms (`/rooms`)
 
 ### Get User Rooms

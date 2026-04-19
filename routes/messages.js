@@ -1,19 +1,27 @@
 /*
 This file defines the routes for fetching messages in a specific chat room. 
-It uses an authentication middleware to ensure that only authenticated users can access the messages. 
-The route retrieves messages from the database based on the room ID and returns them sorted by creation time.
+It uses an authentication middleware to ensure that only authenticated users can
+access the messages. 
+The route retrieves messages from the database based on the room ID and
+returns them sorted by creation time.
 */
 
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/middleware.js';
 import Message from '../models/message.js';
 
+// Initialize the router
 const router = Router();
 
+// Get messages route
 router.get('/:roomId', authMiddleware, async (req, res) => {
     try {
+        // Get room ID from request parameters
         const roomId = req.params.roomId;
+        
+        // Get messages from database
         const messages = await Message.find({ room: roomId }).sort({ createdAt: 1 });
+        // Send messages
         res.send(messages);
 
     } catch (err) {
